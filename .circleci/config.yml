@@ -47,6 +47,6 @@ jobs:
             ssh -o StrictHostKeyChecking=no ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com 'ls -l /var/www/allure-reports/allure-report'
       - run:
           name: Display Allure Report URL
-          command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports"
+          command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/allure-report"
       - store_artifacts:
           path: playwright-report/index.html
