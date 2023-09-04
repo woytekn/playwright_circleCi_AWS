@@ -38,3 +38,6 @@ jobs:
           name: Copy Allure Report to AWS
           command: |
             scp -r -o StrictHostKeyChecking=no allure-report ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
+      - run:
+          name: Display Allure Report URL
+          command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports"
