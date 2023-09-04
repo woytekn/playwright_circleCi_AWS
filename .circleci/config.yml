@@ -39,7 +39,7 @@ jobs:
           command: ls -alh allure-report
       - run:
           name: Change Ownership of Allure Report
-          command: sudo chown -R ec2-user:ec2-user allure-report
+          command: chown -R ec2-user:ec2-user allure-report
       - run:
           name: Copy Allure Report to AWS
           command: |
