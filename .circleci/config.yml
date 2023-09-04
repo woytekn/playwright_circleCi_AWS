@@ -33,7 +33,7 @@ jobs:
           command: npm test
       - run:
           name: Generate Allure Report
-          command: allure generate ./allure-results --clean
+          command: allure generate allure-results --clean -o allure-report
       - run:
           name: Copy Allure Report to AWS
           command: |
