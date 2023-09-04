@@ -4,7 +4,7 @@
 	"description": "",
 	"main": "index.js",
 	"scripts": {
-		"test": "npm run"
+		"test": "npm run --reporter=allure-playwright"
 	},
 	"keywords": [],
 	"author": "",
