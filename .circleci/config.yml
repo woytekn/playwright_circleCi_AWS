@@ -12,5 +12,13 @@ jobs:
           name: Install Dependencies
           command: npm install
       - run:
+          name: Install Allure Commandline
+          command: npm install -g allure-commandline
+      - run:
           name: Run Playwright Tests
           command: npm test
+      - run:
+          name: Generate Allure Report
+          command: allure generate --clean
+      - store_artifacts:
+          path: allure-report
