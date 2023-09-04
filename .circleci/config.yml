@@ -48,5 +48,8 @@ jobs:
       - run:
           name: Display Allure Report URL
           command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/"
+      - run:
+          name: Create AWS Allure Report URL Artifact
+          command: echo "http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/" > allure-report-url.txt
       - store_artifacts:
-          path: allure/reports
+          path: allure-report-url.txt
