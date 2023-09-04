@@ -38,6 +38,9 @@ jobs:
           name: List Allure Report Files
           command: ls -alh allure-report
       - run:
+          name: Change Ownership of Allure Report
+          command: sudo chown -R ec2-user:ec2-user allure-report
+      - run:
           name: Copy Allure Report to AWS
           command: |
             scp -r -o StrictHostKeyChecking=no allure-report ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
