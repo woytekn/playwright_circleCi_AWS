@@ -32,9 +32,6 @@ jobs:
           name: Run Playwright Tests
           command: npm test
       - run:
-          name: Copy Test Artifacts
-          command: cp -r playwright-report/* $CIRCLE_ARTIFACTS
-      - run:
           name: Generate Allure Report
           command: allure generate allure-results --clean
       - run:
@@ -51,3 +48,5 @@ jobs:
       - run:
           name: Display Allure Report URL
           command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports"
+      - store_artifacts:
+          path: playwright-report/index.html
