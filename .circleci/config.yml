@@ -10,7 +10,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - 'SHA256:iartkIFe+0Sx1exfJJygFtPPyagZ+h4jky2nDUk9UQA wojciechnartowski@wojtek_mac'
+            - '79:9c:29:d1:fe:a1:65:4e:e9:5b:25:f9:8f:d6:ea:07'
       - run:
           name: Install Dependencies
           command: npm install
