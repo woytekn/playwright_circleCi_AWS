@@ -1,0 +1,16 @@
+version: 2.1
+executors:
+  docker-executor:
+    docker:
+      - image: mcr.microsoft.com/playwright:v1.37.0-jammy
+jobs:
+  build:
+    executor: docker-executor
+    steps:
+      - checkout
+      - run:
+          name: Install Dependencies
+          command: npm install
+      - run:
+          name: Run Playwright Tests
+          command: npm test
