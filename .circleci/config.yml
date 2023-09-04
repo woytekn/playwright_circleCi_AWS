@@ -32,6 +32,9 @@ jobs:
           name: Run Playwright Tests
           command: npm test
       - run:
+          name: Copy Test Artifacts
+          command: cp -r path/to/artifacts $CIRCLE_ARTIFACTS
+      - run:
           name: Generate Allure Report
           command: allure generate allure-results --clean
       - run:
