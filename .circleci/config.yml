@@ -43,7 +43,7 @@ jobs:
       - run:
           name: Change Ownership on AWS
           command: |
-            ssh -o StrictHostKeyChecking=no ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com 'sudo chown -R ec2-user:ec2-user /var/www/allure-reports/'
+            ssh -o StrictHostKeyChecking=no ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com 'sudo chown -R ec2-user:ec2-user/var/www/allure-reports/'
       - run:
           name: Copy Allure Report to AWS
           command: |
