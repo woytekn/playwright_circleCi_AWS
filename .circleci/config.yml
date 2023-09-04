@@ -8,6 +8,9 @@ jobs:
     executor: docker-executor
     steps:
       - checkout
+      - add_ssh_keys:
+          fingerprints:
+            - 'SHA256:iartkIFe+0Sx1exfJJygFtPPyagZ+h4jky2nDUk9UQA wojciechnartowski@wojtek_mac'
       - run:
           name: Install Dependencies
           command: npm install
@@ -31,5 +34,7 @@ jobs:
       - run:
           name: Generate Allure Report
           command: allure generate --clean
-      - store_artifacts:
-          path: allure-report
+      - run:
+          name: Copy Allure Report to AWS
+          command: |
+            scp -r -o StrictHostKeyChecking=no allure-report ec2-13-48-105-76.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
