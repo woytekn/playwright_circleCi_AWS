@@ -15,6 +15,17 @@ jobs:
           name: Install Allure Commandline
           command: npm install -g allure-commandline
       - run:
+          name: Install Java
+          command: |
+            apt-get update
+            apt-get install -y openjdk-11-jdk
+      - run:
+          name: Set JAVA_HOME
+          command: echo 'export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> $BASH_ENV
+      - run:
+          name: Update PATH
+          command: echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> $BASH_ENV
+      - run:
           name: Run Playwright Tests
           command: npm test
       - run:
