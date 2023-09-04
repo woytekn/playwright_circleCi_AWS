@@ -49,4 +49,4 @@ jobs:
           name: Display Allure Report URL
           command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/"
       - store_artifacts:
-          path: playwright-report/index.html
+          path: allure/reports
