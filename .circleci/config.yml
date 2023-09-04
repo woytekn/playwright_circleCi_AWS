@@ -40,7 +40,7 @@ jobs:
       - run:
           name: Copy Allure Report to AWS
           command: |
-            scp -r -o StrictHostKeyChecking=no /Users/wojciechnartowski/Documents/playwright_circleCi_AWS/allure-report ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
+            scp -r -o StrictHostKeyChecking=no ./allure-report ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
       - run:
           name: Verify Files on AWS
           command: |
