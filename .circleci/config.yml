@@ -39,6 +39,12 @@ jobs:
             apt-get install -y awscli
             aws --version
       - run:
+          name: Configure AWS CLI
+          command: |
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region eu-central-1
+      - run:
           name: Create Allure Results Directory
           command: mkdir -p allure-results
       - run:
@@ -48,13 +54,6 @@ jobs:
       - run:
           name: Generate Allure Report with History
           command: allure generate allure-results --clean
-
-      - run:
-          name: Configure AWS CLI
-          command: |
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-            aws configure set default.region eu-central-1
       - run:
           name: Upload New Allure Report to S3
           command: |
