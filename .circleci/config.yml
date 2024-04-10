@@ -116,7 +116,7 @@ jobs:
           command: echo "Allure report is available at s3://allure-poc-wojtek"
       - run:
           name: Create S3 Allure Report URL Artifact
-          command: echo "s3://allure-poc-wojtek" > allure-report-url.txt
+          command: echo "https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/index.html" > allure-report-url.txt
       - store_artifacts:
           path: allure-report-url.txt
 workflows:
