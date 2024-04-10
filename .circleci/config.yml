@@ -33,17 +33,22 @@ jobs:
           name: Run Playwright Tests
           command: npm test
       - run:
+          name: Install AWS CLI
+          command: |
+            apt-get update
+            apt-get install -y awscli
+            aws --version
+      - run:
+          name: Create Allure Results Directory
+          command: mkdir -p allure-results
+      - run:
           name: Download Allure History from S3
           command: |
             aws s3 cp s3://allure-poc-wojtek/allure-reports/latest/history ./allure-results/history --recursive
       - run:
           name: Generate Allure Report with History
           command: allure generate allure-results --clean
-      - run:
-          name: Install AWS CLI
-          command: |
-            apt-get update
-            apt-get install -y awscli
+
       - run:
           name: Configure AWS CLI
           command: |
