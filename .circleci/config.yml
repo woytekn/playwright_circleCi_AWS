@@ -1,3 +1,59 @@
+# version: 2.1
+# executors:
+#   docker-executor:
+#     docker:
+#       - image: mcr.microsoft.com/playwright:v1.37.0-jammy
+# jobs:
+#   build:
+#     executor: docker-executor
+#     steps:
+#       - checkout
+#       - add_ssh_keys:
+#           fingerprints:
+#             - '9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97'
+#       - run:
+#           name: Install Dependencies
+#           command: npm install
+#       - run:
+#           name: Install Allure Commandline
+#           command: npm install -g allure-commandline
+#       - run:
+#           name: Install Java
+#           command: |
+#             apt-get update
+#             apt-get install -y openjdk-11-jdk
+#       - run:
+#           name: Set JAVA_HOME
+#           command: echo 'export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> $BASH_ENV
+#       - run:
+#           name: Update PATH
+#           command: echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> $BASH_ENV
+#       - run:
+#           name: Run Playwright Tests
+#           command: npm test
+#       - run:
+#           name: Generate Allure Report
+#           command: allure generate allure-results --clean
+#       - run:
+#           name: List Allure Report Files
+#           command: ls -alh allure-report
+#       - run:
+#           name: Copy Allure Report to AWS
+#           command: |
+#             scp -r -o StrictHostKeyChecking=no ./allure-report ./allure-results ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
+#       - run:
+#           name: Verify Files on AWS
+#           command: |
+#             ssh -o StrictHostKeyChecking=no ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com 'ls -l /var/www/allure-reports/allure-report'
+#       - run:
+#           name: Display Allure Report URL
+#           command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/"
+#       - run:
+#           name: Create AWS Allure Report URL Artifact
+#           command: echo "http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/" > allure-report-url.txt
+#       - store_artifacts:
+#           path: allure-report-url.txt
+
 version: 2.1
 executors:
   docker-executor:
@@ -10,7 +66,7 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints:
-            - '9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97'
+            - "9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97"
       - run:
           name: Install Dependencies
           command: npm install
@@ -38,18 +94,30 @@ jobs:
           name: List Allure Report Files
           command: ls -alh allure-report
       - run:
-          name: Copy Allure Report to AWS
+          name: Install AWS CLI
           command: |
-            scp -r -o StrictHostKeyChecking=no ./allure-report ./allure-results ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com:/var/www/allure-reports/
+            apt-get update
+            apt-get install -y awscli
       - run:
-          name: Verify Files on AWS
+          name: Configure AWS CLI
           command: |
-            ssh -o StrictHostKeyChecking=no ec2-user@ec2-16-16-68-191.eu-north-1.compute.amazonaws.com 'ls -l /var/www/allure-reports/allure-report'
+            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
+            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
+            aws configure set default.region eu-central-1
+      - run:
+          name: Copy Allure Report to S3 Bucket
+          command: |
+            aws s3 sync ./allure-report s3://allure-poc-wojtek/allure-reports/ --acl public-read
       - run:
           name: Display Allure Report URL
-          command: echo "Allure report is available at http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/"
+          command: echo "Allure report is available at s3://allure-poc-wojtek/allure-reports/"
       - run:
-          name: Create AWS Allure Report URL Artifact
-          command: echo "http://ec2-16-16-68-191.eu-north-1.compute.amazonaws.com/allure-reports/" > allure-report-url.txt
+          name: Create S3 Allure Report URL Artifact
+          command: echo "s3://allure-poc-wojtek/allure-reports/" > allure-report-url.txt
       - store_artifacts:
           path: allure-report-url.txt
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
