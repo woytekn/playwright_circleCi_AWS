@@ -110,13 +110,13 @@ jobs:
       - run:
           name: Copy Allure Report to S3 Bucket
           command: |
-            aws s3 sync ./allure-report s3://allure-poc-wojtek/allure-reports/ --acl public-read
+            aws s3 sync ./allure-report s3://allure-poc-wojtek --acl public-read
       - run:
           name: Display Allure Report URL
-          command: echo "Allure report is available at s3://allure-poc-wojtek/allure-reports/"
+          command: echo "Allure report is available at s3://allure-poc-wojtek"
       - run:
           name: Create S3 Allure Report URL Artifact
-          command: echo "s3://allure-poc-wojtek/allure-reports/" > allure-report-url.txt
+          command: echo "s3://allure-poc-wojtek" > allure-report-url.txt
       - store_artifacts:
           path: allure-report-url.txt
 workflows:
