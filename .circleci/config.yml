@@ -37,7 +37,6 @@ jobs:
           command: |
             apt-get update
             apt-get install -y awscli
-            aws --version
       - run:
           name: Configure AWS CLI
           command: |
