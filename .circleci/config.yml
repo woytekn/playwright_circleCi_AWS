@@ -35,8 +35,11 @@ jobs:
       - run:
           name: Install AWS CLI
           command: |
+            export DEBIAN_FRONTEND=noninteractive
+            ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
             apt-get update
-            apt-get install -y awscli
+            apt-get install -y awscli tzdata
+            dpkg-reconfigure --frontend noninteractive tzdata
       - run:
           name: Configure AWS CLI
           command: |
