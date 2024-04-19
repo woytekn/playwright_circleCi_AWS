@@ -1,51 +1,40 @@
-# Use a Playwright-ready Node.js image
-FROM mcr.microsoft.com/playwright:v1.37.0-jammy
+# Użyj obrazu Node.js jako bazy, ponieważ Node jest wymagany dla npm i Playwright
+FROM node:14-buster
 
-# Set non-interactive frontend (avoids some prompts)
+# Ustawienie zmiennej środowiskowej, aby uniknąć interaktywnego konfigurowania strefy czasowej podczas instalacji pakietów
 ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Etc/UTC
+
+# Instalacja OpenJDK 11
+RUN apt-get update && apt-get install -y openjdk-11-jdk
+
+# Ustawienie JAVA_HOME i dodanie do ścieżki
 ENV JAVA_HOME /usr/lib/jvm/java-11-openjdk-amd64
+ENV PATH $JAVA_HOME/bin:$PATH
 
-# Update system and install Java, AWS CLI, and any other dependencies
-RUN apt-get update && apt-get install -y \
-    openjdk-11-jdk \
-    awscli \
-    tzdata \
-    && ln -fs /usr/share/zoneinfo/$TZ /etc/localtime \
-    && dpkg-reconfigure --frontend noninteractive tzdata
+# Instalacja AWS CLI
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install
 
-# Configure JAVA_HOME and PATH environment variables
-RUN echo "export JAVA_HOME=${JAVA_HOME}" >> /etc/bash.bashrc \
-    && echo "export PATH=${JAVA_HOME}/bin:${PATH}" >> /etc/bash.bashrc
-
-# Install npm global packages
+# Instalacja Allure Commandline
 RUN npm install -g allure-commandline
 
-# Set the working directory
+# Instalacja Playwright w specyficznej wersji
+RUN npm install -g playwright@1.37.0
+
+# Instalacja wszystkich zależności przeglądarek dla Playwright
+RUN npx playwright install
+
+
+
+
+# Ustawienie pracy w katalogu /app
 WORKDIR /app
 
-# Copy application code
+# Kopiowanie aplikacji do kontenera (jeśli potrzebne)
 COPY . /app
 
-# Install application dependencies
-RUN npm install
+# Port, który może być używany przez aplikacje (jeśli potrzebne)
+EXPOSE 8080
 
-
-
-# Prepare environment variables and directories for Allure and AWS
-RUN mkdir -p /app/allure-results /app/allure-report
-
-# Set additional environment variables via the Dockerfile if required
-ENV AWS_DEFAULT_REGION=eu-central-1
-
-# Command to run our app and test process
-CMD ["sh", "-c", "aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID && \
-                  aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY && \
-                  aws s3 cp s3://allure-poc-wojtek/allure-reports/latest/history ./allure-results/history --recursive && \
-                  npm test && \
-                  allure generate allure-results --clean && \
-                  aws s3 sync ./allure-report s3://allure-poc-wojtek/allure-reports/$UNIQUE_REPORT_DIR --acl public-read && \
-                  aws s3 rm s3://allure-poc-wojtek/allure-reports/latest --recursive && \
-                  aws s3 cp --recursive ./allure-report s3://allure-poc-wojtek/allure-reports/latest/ && \
-                  aws s3 cp --recursive ./allure-report/history s3://allure-poc-wojtek/allure-reports/latest/history/ && \
-                  echo 'Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/allure-reports/${UNIQUE_REPORT_DIR}/index.html'"]
+# Polecenie wykonywane podczas uruchamiania kontenera (dostosuj do swoich potrzeb)
