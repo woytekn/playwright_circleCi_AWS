@@ -1,82 +1,33 @@
 version: 2.1
-executors:
-  docker-executor:
-    docker:
-      - image: mcr.microsoft.com/playwright:v1.37.0-jammy
 
+# Use 'setup_remote_docker' if you need to build or use Docker commands
 jobs:
-  build:
-    executor: docker-executor
+  build-and-test:
+    docker:
+      - image: woytekn1/playwright-allure-awscli:latest # Use your Docker image
+        auth: # Use Docker Hub credentials if necessary
+          username: $DOCKER_LOGIN
+          password: $DOCKER_PASSWORD
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID} # Set these in CircleCI project settings or context
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_DEFAULT_REGION: "eu-central-1" # Default region for AWS CLI
     steps:
       - checkout
-      - add_ssh_keys:
-          fingerprints:
-            - "9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97"
+      - setup_remote_docker:
+          version: 20.10.7 # Use a specific version of Docker if necessary
       - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Install Allure Commandline
-          command: npm install -g allure-commandline
-      - run:
-          name: Install Java
+          name: "Execute Tests"
           command: |
-            apt-get update
-            apt-get install -y openjdk-11-jdk
-      - run:
-          name: Set JAVA_HOME
-          command: echo 'export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> $BASH_ENV
-      - run:
-          name: Update PATH
-          command: echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> $BASH_ENV
-      - run:
-          name: Install AWS CLI
-          command: |
-            export DEBIAN_FRONTEND=noninteractive
-            ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
-            apt-get update
-            apt-get install -y awscli tzdata
-            dpkg-reconfigure --frontend noninteractive tzdata
-      - run:
-          name: Configure AWS CLI
-          command: |
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-            aws configure set default.region eu-central-1
-      - run:
-          name: Define Timestamp
-          command: echo 'export TIMESTAMP=$(date +%Y%m%d%H%M%S)' >> $BASH_ENV
-      - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
-      - run:
-          name: Download Allure History from S3
-          command: |
-            aws s3 cp s3://allure-poc-wojtek/allure-reports/latest/history ./allure-results/history --recursive
-      - run:
-          name: Run Playwright Tests
-          command: npm test
-      - run:
-          name: Generate Allure Report with History
-          command: |
-            allure generate allure-results --clean
-      - run:
-          name: Upload New Allure Report to S3 with Timestamp
-          command: |
-            UNIQUE_REPORT_DIR="build-$(echo $CIRCLE_BUILD_NUM)-${TIMESTAMP}"
-            aws s3 sync ./allure-report s3://allure-poc-wojtek/allure-reports/$UNIQUE_REPORT_DIR --acl public-read
-      - run:
-          name: Update Latest Report Reference with History
-          command: |
-            aws s3 rm s3://allure-poc-wojtek/allure-reports/latest --recursive
-            aws s3 cp --recursive ./allure-report s3://allure-poc-wojtek/allure-reports/latest/
-            aws s3 cp --recursive ./allure-report/history s3://allure-poc-wojtek/allure-reports/latest/history/
-      - run:
-          name: Display Allure Report URL with Timestamp
-          command: echo "Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/allure-reports/${UNIQUE_REPORT_DIR}/index.html"
+            echo "Running tests and other commands inside Docker..."
+            docker run --rm \
+              -e AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID} \
+              -e AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY} \
+              -e AWS_DEFAULT_REGION=${AWS_DEFAULT_REGION} \
+              woytekn1/playwright-allure-awscli:latest  # Replace with your actual image name
 
 workflows:
   version: 2
-  build_and_deploy:
+  build_and_test:
     jobs:
-      - build
+      - build-and-test
