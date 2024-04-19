@@ -26,10 +26,7 @@ RUN apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 
 
 
 # Instalacja wszystkich zależności przeglądarek dla Playwright
-RUN npx playwright install chrome
-
-
-
+RUN npx playwright install
 
 
 # Ustawienie pracy w katalogu /app
@@ -37,8 +34,6 @@ WORKDIR /app
 
 # Kopiowanie aplikacji do kontenera (jeśli potrzebne)
 COPY . /app
-
-ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 
 
