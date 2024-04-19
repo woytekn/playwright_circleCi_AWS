@@ -31,13 +31,14 @@ RUN npx playwright install chrome
 
 
 
+
 # Ustawienie pracy w katalogu /app
 WORKDIR /app
 
 # Kopiowanie aplikacji do kontenera (jeśli potrzebne)
 COPY . /app
 
-# Port, który może być używany przez aplikacje (jeśli potrzebne)
-EXPOSE 8080
+ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
-# Polecenie wykonywane podczas uruchamiania kontenera (dostosuj do swoich potrzeb)
+
+
