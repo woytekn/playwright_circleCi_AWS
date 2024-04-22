@@ -2,7 +2,7 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: woytekn1/playwright-allure-awscli:latest 
+      - image: woytekn1/playwright-allure-awscli:latest
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_PASSWORD
@@ -11,7 +11,7 @@ jobs:
   build:
     executor: docker-executor
     steps:
-      - checkout 
+      - checkout
       - add_ssh_keys:
           fingerprints:
             - "9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97"
@@ -37,7 +37,7 @@ jobs:
             aws s3 cp --recursive ./allure-report/history s3://allure-poc-wojtek/allure-reports/latest/history/
       - run:
           name: Display Allure Report URL with Timestamp
-          command: echo "Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/index.html#" > allure-report-url.txt
+          command: echo "Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/allure-reports/latest/index.html#" > allure-report-url.txt
       - store_artifacts:
           path: allure-report-url.txt
           destination: allure-report-url
