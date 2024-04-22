@@ -19,6 +19,13 @@ jobs:
           name: Define Timestamp
           command: echo 'export TIMESTAMP=$(date +%Y%m%d%H%M%S)' >> $BASH_ENV
       - run:
+          name: Create Allure Results Directory
+          command: mkdir -p allure-results
+      - run:
+          name: Download Allure History from S3
+          command: |
+            aws s3 cp s3://allure-poc-wojtek/allure-reports/latest/history ./allure-results/history --recursive
+      - run:
           name: Run Playwright Tests
           command: npm test # Uruchom testy z Playwright
       - run:
@@ -38,7 +45,7 @@ jobs:
       - run:
           name: Create Allure Report URL File
           command: |
-            echo "Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/index.html#" > allure-report-url.txt
+            echo "Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/latest/index.html#" > allure-report-url.txt
       - store_artifacts:
           path: allure-report-url.txt
           destination: allure-report-url
