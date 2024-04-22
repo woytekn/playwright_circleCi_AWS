@@ -2,7 +2,7 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: woytekn1/playwright-allure-awscli:latest # Nazwa obrazu, który stworzyłeś
+      - image: woytekn1/playwright-allure-awscli:latest 
         auth:
           username: $DOCKER_LOGIN
           password: $DOCKER_PASSWORD
@@ -11,7 +11,7 @@ jobs:
   build:
     executor: docker-executor
     steps:
-      - checkout # Pobiera kod źródłowy
+      - checkout 
       - add_ssh_keys:
           fingerprints:
             - "9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97"
