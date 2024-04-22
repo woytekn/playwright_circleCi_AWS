@@ -17,7 +17,7 @@ jobs:
             - "9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97"
       - run:
           name: Define Timestamp
-          command: echo 'export TIMESTAMP=$(date +%Y%m%d%H%M%S)' >> $BASH_ENV
+          command: echo 'export TIMESTAMP=$(date +%Y%m%d%H%M)' >> $BASH_ENV
       - run:
           name: Create Allure Results Directory
           command: mkdir -p allure-results
