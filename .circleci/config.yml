@@ -49,7 +49,6 @@ jobs:
       - store_artifacts:
           path: allure-report-url.txt
           destination: allure-report-url
-
 workflows:
   version: 2
   build_and_deploy:
