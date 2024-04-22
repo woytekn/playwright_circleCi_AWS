@@ -38,6 +38,9 @@ jobs:
       - run:
           name: Display Allure Report URL with Timestamp
           command: echo "Allure report is available at https://allure-poc-wojtek.s3.eu-central-1.amazonaws.com/index.html#" > allure-report-url.txt
+      - store_artifacts:
+          path: allure-report-url.txt
+          destination: allure-report-url
 
 workflows:
   version: 2
