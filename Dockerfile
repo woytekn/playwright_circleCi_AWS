@@ -22,14 +22,8 @@ RUN npm install -g allure-commandline
 # Instalacja Playwright w specyficznej wersji
 RUN npm install -g playwright@1.37.0
 
-RUN apt-get update && apt-get install -y \
-    libgbm1 \
-    libnss3 \
-    libatk1.0-0 \
-    libatk-bridge2.0-0 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2
+RUN apt-get install -y libnss3 libnspr4 libatk1.0-0 libatk-bridge2.0-0 libcups2 libdbus-1-3 libxrandr2 libxshmfence1 libxcomposite1 libxdamage1 libxkbcommon0 libx11-xcb1 libxcb1
+
 
 
 # Instalacja wszystkich zależności przeglądarek dla Playwright
