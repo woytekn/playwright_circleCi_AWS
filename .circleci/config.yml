@@ -2,64 +2,28 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: mcr.microsoft.com/playwright:v1.37.0-jammy
+      - image: woytekn1/playwright-allure-awscli:latest  # Nazwa obrazu, który stworzyłeś
+        auth:
+          username: $DOCKER_LOGIN
+          password: $DOCKER_PASSWORD
 
 jobs:
   build:
     executor: docker-executor
     steps:
-      - checkout
+      - checkout  # Pobiera kod źródłowy
       - add_ssh_keys:
           fingerprints:
             - "9b:03:91:c2:5a:d9:6e:55:2a:5a:5c:39:49:8b:43:97"
       - run:
-          name: Install Dependencies
-          command: npm install
-      - run:
-          name: Install Allure Commandline
-          command: npm install -g allure-commandline
-      - run:
-          name: Install Java
-          command: |
-            apt-get update
-            apt-get install -y openjdk-11-jdk
-      - run:
-          name: Set JAVA_HOME
-          command: echo 'export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"' >> $BASH_ENV
-      - run:
-          name: Update PATH
-          command: echo 'export PATH="$JAVA_HOME/bin:$PATH"' >> $BASH_ENV
-      - run:
-          name: Install AWS CLI
-          command: |
-            export DEBIAN_FRONTEND=noninteractive
-            ln -fs /usr/share/zoneinfo/Etc/UTC /etc/localtime
-            apt-get update
-            apt-get install -y awscli tzdata
-            dpkg-reconfigure --frontend noninteractive tzdata
-      - run:
-          name: Configure AWS CLI
-          command: |
-            aws configure set aws_access_key_id $AWS_ACCESS_KEY_ID
-            aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY
-            aws configure set default.region eu-central-1
-      - run:
           name: Define Timestamp
           command: echo 'export TIMESTAMP=$(date +%Y%m%d%H%M%S)' >> $BASH_ENV
       - run:
-          name: Create Allure Results Directory
-          command: mkdir -p allure-results
-      - run:
-          name: Download Allure History from S3
-          command: |
-            aws s3 cp s3://allure-poc-wojtek/allure-reports/latest/history ./allure-results/history --recursive
-      - run:
           name: Run Playwright Tests
-          command: npm test
+          command: npm test  # Uruchom testy z Playwright
       - run:
           name: Generate Allure Report with History
-          command: |
-            allure generate allure-results --clean
+          command: allure generate allure-results --clean
       - run:
           name: Upload New Allure Report to S3 with Timestamp
           command: |
